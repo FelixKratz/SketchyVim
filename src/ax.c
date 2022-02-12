@@ -8,7 +8,17 @@ void ax_begin(struct ax* ax) {
   ax->selected_element = NULL;
   ax->role = 0;
 
-  ax->is_privileged = AXIsProcessTrusted();
+  const void *keys[] = { kAXTrustedCheckOptionPrompt };
+  const void *values[] = { kCFBooleanTrue };
+
+  CFDictionaryRef options;
+  options = CFDictionaryCreate(kCFAllocatorDefault,
+                               keys, values, sizeof(keys) / sizeof(*keys),
+                               &kCFCopyStringDictionaryKeyCallBacks,
+                               &kCFTypeDictionaryValueCallBacks);
+
+  ax->is_privileged = AXIsProcessTrustedWithOptions(options);
+  CFRelease(options);
 
   if (ax->is_privileged) ax->system_element = AXUIElementCreateSystemWide();
   else {
