@@ -15,6 +15,7 @@ void buffer_loadrc(struct buffer* buffer) {
     vimExecute(file);
     free(file);
   } 
+  vimExecute("set nocindent nosmartindent noautoindent");
 }
 
 void buffer_begin(struct buffer* buffer) {
