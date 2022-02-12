@@ -167,12 +167,12 @@ bool ax_get_selected_element(struct ax* ax) {
 bool ax_process_selected_element(struct ax* ax) {
   ax->is_supported = ax_get_selected_element(ax); 
 
+  bool success = true;
   if (ax->role == ROLE_TEXT && ax->buffer.cursor.mode != INSERT) {
-    ax_get_text(ax);
-    ax_get_cursor(ax);
+    success = ax_get_text(ax) && ax_get_cursor(ax);
   }
 
-  return ax->is_supported;
+  return ax->is_supported && success;
 }
 
 CGEventRef ax_process_event(struct ax* ax, CGEventRef event) {
