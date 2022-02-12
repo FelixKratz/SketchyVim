@@ -34,3 +34,4 @@ Please tell me if you encounter issues.
 Known Issues:
 -------------
 * Multikey remappings are not recognized (e.g. jk for esc)
+* The cursor sync is not working correctly in the case where something is selected with the mouse in insert mode and then deleted.
