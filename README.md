@@ -28,6 +28,10 @@ brew services start svim
 ```
 where you will be asked to grant accessibility permissions.
 
+Demo:
+
+https://user-images.githubusercontent.com/22680421/153713230-911aee58-a774-4623-a4b7-a6fdd56b4ba7.mp4
+
 ## Issues
 Please tell me if you encounter issues.
 
