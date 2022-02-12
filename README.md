@@ -1,5 +1,5 @@
 # SketchyVim
-This small project turns all accessible input fields on macOS into full vim
+This small project turns all accessible(!) input fields on macOS into full vim
 buffers. It should behave and feel like native vim, because, under the hood
 I simply sync the textfield to a real vim buffer.
 
@@ -10,6 +10,8 @@ custom vim configurations, e.g. remappings (see the examples folder).
 
 Additionally, you can edit the `blacklist` file in the `~/.config/svim/` folder
 to manually exclude applications from being handled by svim.
+You will likely want to blacklist your terminal emulator and gvim, such that there
+is no conflict.
 
 Every time the vim mode changes, or a commandline update is issued, the script
 `svim.sh` in the folder `~/.config/svim/` is executed where you can handle 
