@@ -46,5 +46,5 @@ Known Issues:
 * Some text fields break the accessibility api and this leads to bugs,
   be sure to blacklist all apps that are affected by this.
   Sometimes it helps to switch to a "raw" or "markdown" editing mode on websites,
-  such that there is not interference.
-  Generally, Safari seems to make most text fields available, while firefox does not.
+  such that there is no interference.
+  Generally, Safari seems to make most text fields available, while Firefox does not.
