@@ -1,7 +1,10 @@
 # SketchyVim
+
 This small project turns all accessible(!) input fields on macOS into full vim
 buffers. It should behave and feel like native vim, because, under the hood
 I simply sync the textfield to a real vim buffer.
+
+![demo](https://user-images.githubusercontent.com/22680421/153753171-e818d40b-4d72-4b88-9719-d1e36d16dec0.gif)
 
 You can use all modes (even commandline etc.) and all commands included in vim.
 
@@ -36,6 +39,11 @@ where you will be asked to grant accessibility permissions.
 Demo:
 
 https://user-images.githubusercontent.com/22680421/153713230-911aee58-a774-4623-a4b7-a6fdd56b4ba7.mp4
+
+You can change the macOS selection color to anything you like with this command (which is my green):
+```bash
+defaults write NSGlobalDomain AppleHighlightColor -string "0.615686 0.823529 0.454902"
+```
 
 ## Issues
 Please tell me if you encounter issues.
