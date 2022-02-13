@@ -45,7 +45,8 @@ uint32_t line_get_position_from_raw_position(struct line* line, uint32_t raw_pos
 
     wchar_t* tmp2 = malloc(sizeof(wchar_t) * (raw_pos + 1));
     memset(tmp2, 0, sizeof(wchar_t) * (raw_pos + 1));
-    swprintf(tmp2, raw_pos + 1, L"%s\0", tmp);
+    swprintf(tmp2, raw_pos + 1, L"%s", tmp);
+    tmp2[raw_pos] = '\0';
     uint32_t len = wcslen(tmp2);
     free(tmp);
     free(tmp2);

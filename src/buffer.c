@@ -80,10 +80,12 @@ void buffer_sync_cursor(struct buffer* buffer) {
   }
 
   uint32_t pos = line_get_position_from_raw_position(buffer->lines[cursor_pos.lnum - 1], cursor_pos.col);
+
   buffer->cursor.position = cursor_pos_cummulative + pos;
 
-  if (buffer->cursor.mode & NORMAL)
+  if (buffer->cursor.mode & NORMAL) {
     buffer->cursor.selection = 1;
+  }
   else if (buffer->cursor.mode & VISUAL) {
     pos_T start, end;
     vimVisualGetRange(&start, &end);
@@ -192,12 +194,13 @@ void buffer_sync(struct buffer* buffer) {
 void buffer_input(struct buffer* buffer, UniChar key, UniCharCount count) {
   if (key == 0x1B) {
     vimKey(NORMAL_MODE);
-  } else {
+  }
+  else {
     char_u* key_str = malloc(sizeof(char_u) * (2 * count + 1));
     memset(key_str, 0, (2 * count + 1));
     snprintf(key_str, 2 * count + 1, "%lc", key);
 
-   vimInput(key_str);
+    vimInput(key_str);
     free(key_str);
   }
 
@@ -220,19 +223,22 @@ void buffer_revsync_cursor(struct buffer* buffer) {
   uint32_t line_character_count = 0;
   for (int i = 0; i < buffer->line_count; i++) {
     line_character_count = buffer->lines[i]->length;
-    character_count += buffer->lines[i]->length + (i == 0 ? 0 : 1);
+    character_count += buffer->lines[i]->length + 1;
     line = i + 1;
     if (character_count > buffer->cursor.position) break;
   }
 
   pos_T pos = {0, 0, 0};
   pos.lnum = line;
-  pos.col = line_get_raw_position_from_position(buffer->lines[line - 1],
-                                                buffer->cursor.position 
-                                                + line_character_count
-                                                - character_count);
+  if (line > 0) {
+    pos.col = line_get_raw_position_from_position(buffer->lines[line - 1],
+                                                  buffer->cursor.position
+                                                  + line_character_count
+                                                  - character_count);
+  }
 
   vimCursorSetPosition(pos);
+  buffer_sync_cursor(buffer);
 }
 
 void buffer_clear(struct buffer* buffer) {

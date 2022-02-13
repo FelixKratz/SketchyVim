@@ -212,6 +212,9 @@ CGEventRef ax_process_event(struct ax* ax, CGEventRef event) {
 
     // Insert mode is passed and only synced later
     if (was_insert && ax->buffer.cursor.mode & INSERT) return event;
+    else if (was_insert) {
+      if (!ax_get_text(ax) || !ax_get_cursor(ax)) return event;
+    }
 
     ax_set_buffer(ax);
 
