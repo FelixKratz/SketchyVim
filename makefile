@@ -1,4 +1,4 @@
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 CC = clang
 DEFINES = -DHAVE_CONFIG_H -DMACOS_X -DMACOS_X_DARWIN
 LIBS = lib/libvim.a -lm -lncurses -liconv -framework Carbon -framework Cocoa
@@ -15,7 +15,7 @@ SRC = src
 _OBJ = helpers.om workspace.om event_tap.o ax.o buffer.o line.o env_vars.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
-.PHONY: all x86 arm64 universal sign clean
+.PHONY: all x86 arm64 universal sign lib clean
 
 all: $(ODIR)/svim
 
@@ -47,6 +47,10 @@ bundle:
 	cp -r examples/ bundle/
 	tar -czf bundle_$(VERSION).tgz bundle/
 	rm -rf bundle/
+
+lib:
+	cd libvim/src/ && make
+	cp libvim/src/libvim.a lib/libvim.a
 
 bin/svim: $(SRC)/main.m $(OBJ) | $(ODIR)
 	$(CC) $(CFLAGS) $^ -o $(ODIR)/svim $(LIBS)
