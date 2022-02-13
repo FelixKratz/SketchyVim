@@ -48,3 +48,12 @@ Known Issues:
   Sometimes it helps to switch to a "raw" or "markdown" editing mode on websites,
   such that there is no interference.
   Generally, Safari seems to make most text fields available, while Firefox does not.
+
+## Contributions
+Pull requests are welcome. If you improve the code for your own use, consider creating
+a pull request, such that all people (including me) can enjoy those improvements.
+
+## Credits
+* I use the libvim library which is a compact and minimal c library for the vim core.
+* Many prior projects tried to accomplish a similar vision by rebuilding the vim
+  movements by hand, those have inspired me to create this project.
