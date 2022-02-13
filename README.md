@@ -18,6 +18,9 @@ Every time the vim mode changes, or a commandline update is issued, the script
 how you want to process this information. I have a small popup in my SketchyBar
 which shows me the commandline output on demand for example.
 
+(!): Accessible means, that the input field needs to conform to the accessibility
+     standards for text input fields, else there is nothing we can do.
+
 ## Installation
 You can install this using brew from my tap:
 ```bash
@@ -40,4 +43,8 @@ Please tell me if you encounter issues.
 Known Issues:
 -------------
 * Multikey remappings are not recognized (e.g. jk for esc)
-* The cursor sync is not working correctly in the case where something is selected with the mouse in insert mode and then deleted.
+* Some text fields break the accessibility api and this leads to bugs,
+  be sure to blacklist all apps that are affected by this.
+  Sometimes it helps to switch to a "raw" or "markdown" editing mode on websites,
+  such that there is not interference.
+  Generally, Safari seems to make most text fields available, while firefox does not.
