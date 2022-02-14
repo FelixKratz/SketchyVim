@@ -151,8 +151,9 @@ bool ax_get_selected_element(struct ax* ax) {
       // free(role);
     }
 
+    if (role_ref) CFRelease(role_ref);
+
     if (!role) {
-      if (role_ref) CFRelease(role_ref);
       CFRelease(selected_element);
       selected_element = NULL;
     }
