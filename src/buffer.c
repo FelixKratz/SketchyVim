@@ -96,9 +96,11 @@ void buffer_sync_cursor(struct buffer* buffer) {
       inverted = true;
     }
 
+    uint32_t start_pos = line_get_position_from_raw_position(buffer->lines[start.lnum - 1],
+                                                             start.col);
 
-    uint32_t start_pos = line_get_position_from_raw_position(buffer->lines[start.lnum - 1], start.col);
-    uint32_t end_pos = line_get_position_from_raw_position(buffer->lines[end.lnum - 1], end.col);
+    uint32_t end_pos = line_get_position_from_raw_position(buffer->lines[end.lnum - 1],
+                                                           end.col);
     
     uint32_t selection = 0;
     for (int i = start.lnum; i < end.lnum; i++) {
@@ -107,13 +109,17 @@ void buffer_sync_cursor(struct buffer* buffer) {
 
     int visual_mode = vimVisualGetType();
 
-    if (visual_mode == 0x56)
-      selection += end_pos;
-    else
+    if (visual_mode == VISUAL_LINE) {
+      buffer->cursor.position = cursor_pos_cummulative - (inverted ? 0 : selection);
+      selection += buffer->lines[end.lnum - 1]->length;
+      buffer->cursor.selection = selection;
+    }
+    else {
       selection += end_pos - start_pos;
+      buffer->cursor.position -= inverted ? 0 : selection;
+      buffer->cursor.selection = selection + 1;
+    }
 
-    buffer->cursor.position -= inverted ? 0 : selection;
-    buffer->cursor.selection = selection + 1;
   }
   else
     buffer->cursor.selection = 0;

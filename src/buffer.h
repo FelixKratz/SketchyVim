@@ -10,6 +10,8 @@
 #define NORMAL_MODE  "<esc>"
 #define INSERT_MODE  "i"
 
+#define VISUAL_LINE  0x56
+
 extern const char* read_file(char* path);
 extern bool vfork_exec(char *command, struct env_vars* env_vars);
 extern char* string_copy(char* s);
