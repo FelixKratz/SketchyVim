@@ -1,4 +1,4 @@
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 CC = clang
 DEFINES = -DHAVE_CONFIG_H -DMACOS_X -DMACOS_X_DARWIN
 LIBS = lib/libvim.a -lm -lncurses -liconv -framework Carbon -framework Cocoa
@@ -40,7 +40,7 @@ sign:
 	$(MAKE) universal
 	codesign -fs 'svim-cert' $(ODIR)/svim
 
-bundle:
+bundle: clean
 	$(MAKE) sign
 	@mkdir bundle
 	cp $(ODIR)/svim bundle/

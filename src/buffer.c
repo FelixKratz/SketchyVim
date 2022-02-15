@@ -42,32 +42,30 @@ void buffer_update_raw_text(struct buffer* buffer) {
   }
   raw[len - 1] = '\0';
 
-  if (buffer->raw && raw && strcmp(buffer->raw, raw) == 0) {
-    free(raw);
-    buffer->did_change = false;
-  }
-  else {
-    if (buffer->raw) free(buffer->raw);
-    buffer->raw = raw;
-    buffer->did_change = true;
-  }
+  if (buffer->raw) free(buffer->raw);
+  buffer->raw = raw;
 }
 
 void buffer_sync_text(struct buffer* buffer) {
   buffer_update_raw_text(buffer);
 
-  for (int i = 0; i < buffer->line_count; i++)
-    line_destroy(buffer->lines[i]);
-
   uint32_t lines = vimBufferGetLineCount(buffer->vbuf);
+  uint32_t old_count = buffer->line_count;
+
+  for (int i = lines; i < buffer->line_count; i++) {
+    line_destroy(buffer->lines[i]);
+    buffer->lines[i] = NULL;
+  }
+
   buffer->lines = realloc(buffer->lines, sizeof(struct line*) * lines);
-  memset(buffer->lines, 0, sizeof(struct line*) * lines);
   buffer->line_count = lines;
 
+  buffer->did_change = false;
   for (int i = 1; i <= lines; i++) {
     char_u* line = vimBufferGetLine(buffer->vbuf, i);
-    buffer->lines[i - 1] = line_create();
+    if (i > old_count) buffer->lines[i - 1] = line_create();
     line_set_text(buffer->lines[i - 1], line);
+    buffer->did_change |= buffer->lines[i - 1]->changed;
   }
 }
 
@@ -119,7 +117,6 @@ void buffer_sync_cursor(struct buffer* buffer) {
       buffer->cursor.position -= inverted ? 0 : selection;
       buffer->cursor.selection = selection + 1;
     }
-
   }
   else
     buffer->cursor.selection = 0;

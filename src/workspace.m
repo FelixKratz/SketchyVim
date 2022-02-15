@@ -35,6 +35,7 @@ void workspace_begin(void **context) {
       if (app) name = string_copy((char*)[[app localizedName] UTF8String]);
     }
 
+    if (g_front_app) free(g_front_app);
     g_front_app = name;
 }
 

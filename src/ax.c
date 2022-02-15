@@ -160,6 +160,7 @@ bool ax_get_selected_element(struct ax* ax) {
   }
 
   ax->role = role;
+  if (ax->selected_element) CFRelease(ax->selected_element);
   ax->selected_element = selected_element;
 
   return (error == kAXErrorSuccess) && role;

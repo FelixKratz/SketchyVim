@@ -3,8 +3,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 struct line {
+  bool changed;
   uint32_t length;
   uint32_t raw_length;
   wchar_t* text;

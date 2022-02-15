@@ -9,18 +9,30 @@ struct line* line_create() {
   return line;
 }
 
+bool line_compare_raw(struct line* line, char* raw) {
+  if (line->raw && raw && strcmp(line->raw, raw) == 0)
+    return true;
+  return false;
+}
+
 void line_set_text(struct line* line, char* text) {
   if (!text) return;
-  line_clear(line);
+
+  if (line_compare_raw(line, text)) {
+    line->changed = false;
+    return;
+  }
+
   uint32_t len = strlen(text);
-  line->text = malloc(sizeof(wchar_t) * (len + 1));
-  memset(line->text, 0, sizeof(wchar_t) * (len + 1));
-  swprintf(line->text, len + 1, L"%s\0", text);
+  line->text = realloc(line->text, sizeof(wchar_t) * (len + 1));
+  swprintf(line->text, len + 1, L"%s", text);
+  line->text[len] = '\0';
   line->length = wcslen(line->text);
 
-  line->raw = malloc(sizeof(char) * (len + 1));
+  line->raw = realloc(line->raw, sizeof(char) * (len + 1));
   memcpy(line->raw, text, sizeof(char) * (len + 1));
   line->raw_length = len;
+  line->changed = true;
 }
 
 void line_clear(struct line* line) {
