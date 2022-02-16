@@ -160,7 +160,6 @@ bool ax_get_selected_element(struct ax* ax) {
   }
 
   ax->role = role;
-  if (ax->selected_element) CFRelease(ax->selected_element);
   ax->selected_element = selected_element;
 
   return (error == kAXErrorSuccess) && role;
@@ -229,33 +228,40 @@ CGEventRef ax_process_event(struct ax* ax, CGEventRef event) {
   //     case K: {
   //       const UniChar down = DOWN;
   //       CGEventKeyboardSetUnicodeString(event, 1, &down);
+  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
   //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 125);
   //     } break;
   //     case L: {
   //       const UniChar up = UP;
   //       CGEventKeyboardSetUnicodeString(event, 1, &up);
+  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
   //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 126);
   //     } break;
   //     case J: {
   //       const UniChar left = LEFT;
   //       CGEventKeyboardSetUnicodeString(event, 1, &left);
+  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
   //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 123);
   //     } break;
   //     case OE: {
   //       const UniChar right = RIGHT;
   //       CGEventKeyboardSetUnicodeString(event, 1, &right);
+  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
   //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 124);
   //     } break;
   //   }
-  // } 
+  // }
 
   return event;
 }
 
 void ax_clear(struct ax* ax) {
   buffer_clear(&ax->buffer);
-  if (ax->selected_element) CFRelease(ax->selected_element);
+  if (ax->selected_element && ax->role == ROLE_TEXT) {
+    buffer_call_script(&ax->buffer, false);
+  }
 
+  if (ax->selected_element) CFRelease(ax->selected_element);
   ax->role = 0;
   ax->selected_element = NULL;
   ax->is_supported = false;

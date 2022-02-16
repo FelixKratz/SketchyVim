@@ -41,6 +41,7 @@ void buffer_input(struct buffer* buffer, UniChar key, UniCharCount count);
 void buffer_clear(struct buffer* buffer);
 void buffer_revsync_text(struct buffer* buffer);
 void buffer_revsync_cursor(struct buffer* buffer);
+void buffer_call_script(struct buffer* buffer, bool supported);
 
 struct line* line_create();
 void line_destroy(struct line* line);

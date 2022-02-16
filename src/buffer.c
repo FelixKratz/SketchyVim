@@ -147,17 +147,12 @@ bool buffer_sync_cmdline(struct buffer* buffer) {
   return true;
 }
 
-// TODO: Hook the event when an item is deselected and call cleanup script
-void buffer_sync(struct buffer* buffer) {
-  bool did_change = buffer_sync_mode(buffer);
+void buffer_call_script(struct buffer* buffer, bool supported) {
+  struct env_vars env_vars;
+  env_vars_init(&env_vars);
+  char mode_str[3] = "";
 
-  buffer_sync_text(buffer);
-
-  did_change |= buffer_sync_cmdline(buffer);
-  buffer_sync_cursor(buffer);
-
-  if (did_change) {
-    char mode_str[3];
+  if (supported) {
     if (buffer->cursor.mode & INSERT) {
       snprintf(mode_str, 2, "I");
     }
@@ -170,28 +165,34 @@ void buffer_sync(struct buffer* buffer) {
     else if (buffer->cursor.mode & CMDLINE) {
       snprintf(mode_str, 2, "C");
     }
-    // TODO: Add pending command modes
     else
-      snprintf(mode_str, 2, "");
-
-    mode_str[2] = '\0';
-
-    struct env_vars env_vars;
-    env_vars_init(&env_vars);
-    env_vars_set(&env_vars, string_copy("MODE"),
-                            string_copy(mode_str));
+      snprintf(mode_str, 2, "_");
 
     env_vars_set(&env_vars, string_copy("CMDLINE"),
                             string_copy((buffer->command_line.raw
                                          ? buffer->command_line.raw
                                          : "")));
-
-    char* home = getenv("HOME");
-    char buf[512];
-    snprintf(buf, sizeof(buf), "%s/%s", home, ".config/svim/svim.sh");
-    vfork_exec(buf, &env_vars);
-    env_vars_destroy(&env_vars);
   }
+
+  env_vars_set(&env_vars, string_copy("MODE"),
+                          string_copy(mode_str));
+
+  char* home = getenv("HOME");
+  char buf[512];
+  snprintf(buf, sizeof(buf), "%s/%s", home, ".config/svim/svim.sh");
+  vfork_exec(buf, &env_vars);
+  env_vars_destroy(&env_vars);
+}
+
+void buffer_sync(struct buffer* buffer) {
+  bool did_change = buffer_sync_mode(buffer);
+
+  buffer_sync_text(buffer);
+
+  did_change |= buffer_sync_cmdline(buffer);
+  buffer_sync_cursor(buffer);
+
+  if (did_change) buffer_call_script(buffer, true);
 }
 
 void buffer_input(struct buffer* buffer, UniChar key, UniCharCount count) {

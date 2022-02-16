@@ -19,8 +19,12 @@ static CGEventRef key_handler(CGEventTapProxy proxy, CGEventType type,
       CGEventTapEnable(((struct event_tap*) reference)->handle, true);
     } break;
     case kCGEventKeyDown: {
-      if (event_tap_pid_blacklisted((struct event_tap*) reference))
+      if (event_tap_pid_blacklisted((struct event_tap*) reference)) {
+        if (g_ax.selected_element && g_ax.role) {
+          ax_clear(&g_ax);
+        }
         return event;
+      }
 
       return ax_process_event(&g_ax, event);
     } break;

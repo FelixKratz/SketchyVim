@@ -1,5 +1,5 @@
-#include <Cocoa/Cocoa.h>
 #pragma once
+#include <Cocoa/Cocoa.h>
 
 char* g_front_app;
 

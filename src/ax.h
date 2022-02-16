@@ -22,9 +22,6 @@
 #define K  0x6B
 #define L  0x6C
 #define OE 0xF6
-//////////////////////
-
-#define kAXWebAreaRole CFSTR("AXWebArea")
 
 extern char* cfstring_get_cstring(CFStringRef text_ref);
 
