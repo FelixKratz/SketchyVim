@@ -1,7 +1,7 @@
 #include "event_tap.h"
 #include <stdint.h>
 
-bool event_tap_app_blacklisted(struct event_tap* event_tap, char* app) {
+bool event_tap_check_blacklist(struct event_tap* event_tap, char* app) {
   if (!app) return true;
   for (int i = 0; i < event_tap->blacklist_count; i++)
     if (strcmp(event_tap->blacklist[i], app) == 0) return true;
@@ -19,7 +19,7 @@ static CGEventRef key_handler(CGEventTapProxy proxy, CGEventType type,
       CGEventTapEnable(((struct event_tap*) reference)->handle, true);
     } break;
     case kCGEventKeyDown: {
-      if (g_front_app_ignored) {
+      if (((struct event_tap*) reference)->front_app_ignored) {
         if (g_ax.selected_element && g_ax.role) {
           ax_clear(&g_ax);
         }
@@ -40,6 +40,7 @@ bool event_tap_enabled(struct event_tap* event_tap) {
 void event_tap_load_blacklist(struct event_tap* event_tap) {
   event_tap->blacklist = NULL;
   event_tap->blacklist_count = 0;
+  event_tap->front_app_ignored = true;
 
   char* home = getenv("HOME");
   char buf[512];

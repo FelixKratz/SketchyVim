@@ -4,7 +4,6 @@
 void workspace_begin(void **context) {
     workspace_context *ws_context = [workspace_context alloc];
     *context = ws_context;
-    g_front_app_ignored = true;
 
     [ws_context init];
 }
@@ -35,7 +34,7 @@ void workspace_begin(void **context) {
       if (app) name = string_copy((char*)[[app localizedName] UTF8String]);
     }
 
-    g_front_app_ignored = event_tap_app_blacklisted(&g_event_tap, name);
+    g_event_tap.front_app_ignored = event_tap_check_blacklist(&g_event_tap, name);
     free(name);
 }
 
