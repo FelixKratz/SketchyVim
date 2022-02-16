@@ -1,10 +1,10 @@
 #include "event_tap.h"
 #include <stdint.h>
 
-bool event_tap_pid_blacklisted(struct event_tap* event_tap) {
-  if (!g_front_app) return true;
+bool event_tap_app_blacklisted(struct event_tap* event_tap, char* app) {
+  if (!app) return true;
   for (int i = 0; i < event_tap->blacklist_count; i++)
-    if (strcmp(event_tap->blacklist[i], g_front_app) == 0) return true;
+    if (strcmp(event_tap->blacklist[i], app) == 0) return true;
 
   return false;
 }
@@ -19,7 +19,7 @@ static CGEventRef key_handler(CGEventTapProxy proxy, CGEventType type,
       CGEventTapEnable(((struct event_tap*) reference)->handle, true);
     } break;
     case kCGEventKeyDown: {
-      if (event_tap_pid_blacklisted((struct event_tap*) reference)) {
+      if (g_front_app_ignored) {
         if (g_ax.selected_element && g_ax.role) {
           ax_clear(&g_ax);
         }

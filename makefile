@@ -1,4 +1,4 @@
-VERSION = "1.0.5"
+VERSION = "1.0.6"
 CC = clang
 DEFINES = -DHAVE_CONFIG_H -DMACOS_X -DMACOS_X_DARWIN
 LIBS = lib/libvim.a -lm -lncurses -liconv -framework Carbon -framework Cocoa

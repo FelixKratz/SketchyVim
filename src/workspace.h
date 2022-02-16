@@ -1,7 +1,8 @@
 #pragma once
 #include <Cocoa/Cocoa.h>
+#include "event_tap.h"
 
-char* g_front_app;
+bool g_front_app_ignored;
 
 extern char* string_copy(char* s);
 

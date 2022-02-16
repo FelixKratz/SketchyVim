@@ -9,9 +9,9 @@ void* g_workspace;
 int main (int argc, char *argv[]) {
   NSApplicationLoad();
 
-  workspace_begin(&g_workspace);
   ax_begin(&g_ax);
   event_tap_begin(&g_event_tap);
+  workspace_begin(&g_workspace);
 
   CFRunLoopRun();
   return 0;

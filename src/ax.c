@@ -25,7 +25,7 @@ void ax_begin(struct ax* ax) {
     printf("Accessibility not granted. Exit.");
     exit(1);
   }
-  assert(ax->is_privileged);
+
   assert(ax->system_element != NULL);
 }
 
