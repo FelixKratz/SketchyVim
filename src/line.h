@@ -7,8 +7,11 @@
 
 struct line {
   bool changed;
+
   uint32_t length;
   uint32_t raw_length;
+  uint32_t cursor_offset;
+
   wchar_t* text;
   char* raw;
 };

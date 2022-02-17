@@ -1,5 +1,4 @@
 #include "event_tap.h"
-#include <stdint.h>
 
 bool event_tap_check_blacklist(struct event_tap* event_tap, char* app) {
   if (!app) return true;

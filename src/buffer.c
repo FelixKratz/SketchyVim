@@ -60,26 +60,24 @@ void buffer_sync_text(struct buffer* buffer) {
   buffer->lines = realloc(buffer->lines, sizeof(struct line*) * lines);
   buffer->line_count = lines;
 
-  buffer->did_change = false;
+  buffer->lines_changed = 0;
+  uint32_t cursor_pos_cummulative = 0;
   for (int i = 1; i <= lines; i++) {
     char_u* line = vimBufferGetLine(buffer->vbuf, i);
     if (i > old_count) buffer->lines[i - 1] = line_create();
     line_set_text(buffer->lines[i - 1], line);
-    buffer->did_change |= buffer->lines[i - 1]->changed;
+    buffer->lines[i - 1]->cursor_offset = cursor_pos_cummulative;
+    cursor_pos_cummulative += buffer->lines[i - 1]->length + 1;
+    buffer->lines_changed += buffer->lines[i - 1]->changed;
   }
 }
 
 void buffer_sync_cursor(struct buffer* buffer) {
   pos_T cursor_pos = vimCursorGetPosition();
+  uint32_t pos = line_get_position_from_raw_position(buffer->lines[cursor_pos.lnum - 1],
+                                                     cursor_pos.col);
 
-  uint32_t cursor_pos_cummulative = 0;
-  for (int i = 0; i < cursor_pos.lnum - 1; i++) {
-    cursor_pos_cummulative += buffer->lines[i]->length + 1;
-  }
-
-  uint32_t pos = line_get_position_from_raw_position(buffer->lines[cursor_pos.lnum - 1], cursor_pos.col);
-
-  buffer->cursor.position = cursor_pos_cummulative + pos;
+  buffer->cursor.position = buffer->lines[cursor_pos.lnum - 1]->cursor_offset + pos;
 
   if (buffer->cursor.mode & NORMAL) {
     buffer->cursor.selection = 1;
@@ -108,7 +106,8 @@ void buffer_sync_cursor(struct buffer* buffer) {
     int visual_mode = vimVisualGetType();
 
     if (visual_mode == VISUAL_LINE) {
-      buffer->cursor.position = cursor_pos_cummulative - (inverted ? 0 : selection);
+      buffer->cursor.position = buffer->lines[cursor_pos.lnum - 1]->cursor_offset
+                                - (inverted ? 0 : selection);
       selection += buffer->lines[end.lnum - 1]->length;
       buffer->cursor.selection = selection;
     }
@@ -253,7 +252,7 @@ void buffer_clear(struct buffer* buffer) {
   line_clear(&buffer->command_line);
 
   buffer->cursor = (struct cursor){0, 0, 0};
-  buffer->did_change = false;
+  buffer->lines_changed = 0;
   buffer->line_count = 0;
   buffer->lines = NULL;
   buffer->raw = NULL;

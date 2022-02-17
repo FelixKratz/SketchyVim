@@ -10,6 +10,7 @@
 #define NORMAL_MODE  "<esc>"
 #define INSERT_MODE  "i"
 
+#define VISUAL_BLOCK 0x16
 #define VISUAL_LINE  0x56
 
 extern const char* read_file(char* path);
@@ -26,7 +27,7 @@ struct buffer {
   buf_T* vbuf;
   char_u* raw;
 
-  bool did_change;
+  uint32_t lines_changed;
   struct line command_line;
   char cmd_line_mode;
 

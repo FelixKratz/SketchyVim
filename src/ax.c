@@ -1,6 +1,5 @@
 #include "ax.h"
 #include "buffer.h"
-#include <stdint.h>
 
 void ax_begin(struct ax* ax) {
   buffer_begin(&ax->buffer);
@@ -77,7 +76,7 @@ bool ax_get_cursor(struct ax* ax) {
 
 bool ax_set_text(struct ax* ax) {
   if (!ax->is_supported) return false;
-  if (!ax->buffer.did_change) return true;
+  if (!ax->buffer.lines_changed) return true;
 
   CFStringRef text_ref = CFStringCreateWithCString(NULL,
                                                    ax->buffer.raw,
@@ -99,7 +98,7 @@ bool ax_set_cursor(struct ax* ax) {
   AXValueRef value = AXValueCreate(kAXValueCFRangeType, &text_range);
   // HACK: This is needed when the text has been set to give the
   // HACK: AX API some time to breathe...
-  if (ax->buffer.did_change) usleep(15000);
+  if (ax->buffer.lines_changed) usleep(15000);
 
   AXError error = AXUIElementSetAttributeValue(ax->selected_element,
                                                kAXSelectedTextRangeAttribute,

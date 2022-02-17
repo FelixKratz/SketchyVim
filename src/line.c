@@ -1,7 +1,4 @@
 #include "line.h"
-#include <stdint.h>
-#include <string.h>
-#include <wchar.h>
 
 struct line* line_create() {
   struct line* line = malloc(sizeof(struct line));
@@ -40,6 +37,7 @@ void line_clear(struct line* line) {
   if (line->raw) free(line->raw);
   line->raw = NULL;
   line->text = NULL;
+  line->cursor_offset = 0;
   line->length = 0;
   line->raw_length = 0;
 }
