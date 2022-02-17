@@ -1,9 +1,12 @@
 #include "event_tap.h"
 
-bool event_tap_check_blacklist(struct event_tap* event_tap, char* app) {
+bool event_tap_check_blacklist(struct event_tap* event_tap, char* app, char* bundle_id) {
   if (!app) return true;
   for (int i = 0; i < event_tap->blacklist_count; i++)
-    if (strcmp(event_tap->blacklist[i], app) == 0) return true;
+    if (strcmp(event_tap->blacklist[i], app) == 0 
+        || strcmp(event_tap->blacklist[i], bundle_id) == 0) {
+      return true;
+    }
 
   return false;
 }

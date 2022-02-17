@@ -1,4 +1,5 @@
 #include "workspace.h"
+#include "buffer.h"
 #include "event_tap.h"
 
 void workspace_begin(void **context) {
@@ -29,13 +30,20 @@ void workspace_begin(void **context) {
 
 - (void)appSwitched:(NSNotification *)notification {
     char* name = NULL;
+    char* bundle_id = NULL;
     if (notification && notification.userInfo) {
       NSRunningApplication* app = [notification.userInfo objectForKey:NSWorkspaceApplicationKey];
-      if (app) name = string_copy((char*)[[app localizedName] UTF8String]);
+      if (app) {
+        name = string_copy((char*)[[app localizedName] UTF8String]);
+        bundle_id = string_copy((char*)[[app bundleIdentifier] UTF8String]);
+      }
     }
 
-    g_event_tap.front_app_ignored = event_tap_check_blacklist(&g_event_tap, name);
-    free(name);
+    g_event_tap.front_app_ignored = event_tap_check_blacklist(&g_event_tap,
+                                                              name,
+                                                              bundle_id);
+    if (name) free(name);
+    if (bundle_id) free(bundle_id);
 }
 
 @end

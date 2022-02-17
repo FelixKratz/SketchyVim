@@ -22,4 +22,4 @@ struct event_tap g_event_tap;
 bool event_tap_enabled(struct event_tap *event_tap);
 bool event_tap_begin(struct event_tap *event_tap);
 void event_tap_end(struct event_tap *event_tap);
-bool event_tap_check_blacklist(struct event_tap* event_tap, char* app);
+bool event_tap_check_blacklist(struct event_tap* event_tap, char* app, char* bundle_id);
