@@ -11,17 +11,15 @@
 
 #define ENTER  0x0D
 #define ESCAPE 0x1B
-#define LEFT   0x1C
-#define RIGHT  0x1D
-#define UP     0x1E
-#define DOWN   0x1F
 
-// HACK: These are hardcoded for my workflow for now
-// TODO: Infere movement keys from mappings
+#ifdef GUI_MOVES
+
 #define J  0x6A
 #define K  0x6B
 #define L  0x6C
 #define OE 0xF6
+
+#endif //GUI_MOVES
 
 extern char* cfstring_get_cstring(CFStringRef text_ref);
 

@@ -75,7 +75,7 @@ bool ax_get_cursor(struct ax* ax) {
 }
 
 bool ax_set_text(struct ax* ax) {
-  if (!ax->is_supported) return false;
+  if (!ax->is_supported || !ax->buffer.raw) return false;
   if (!ax->buffer.lines_changed) return true;
 
   CFStringRef text_ref = CFStringCreateWithCString(NULL,
@@ -138,6 +138,7 @@ bool ax_get_selected_element(struct ax* ax) {
       role = ROLE_TEXT;
     }
     else if (role_ref && (CFEqual(role_ref,   kAXTableRole) ||
+                          CFEqual(role_ref,  kAXButtonRole) ||
                           CFEqual(role_ref, kAXOutlineRole)   )) {
       role = ROLE_TABLE;
     }
@@ -221,35 +222,30 @@ CGEventRef ax_process_event(struct ax* ax, CGEventRef event) {
     return NULL;
   }
 
-  // NOTE: Disabled for now, till keys are infered from mapping
-  // if (ax->role == ROLE_TABLE || ax->role == ROLE_SCROLL) {
-  //   switch (character) {
-  //     case K: {
-  //       const UniChar down = DOWN;
-  //       CGEventKeyboardSetUnicodeString(event, 1, &down);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 125);
-  //     } break;
-  //     case L: {
-  //       const UniChar up = UP;
-  //       CGEventKeyboardSetUnicodeString(event, 1, &up);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 126);
-  //     } break;
-  //     case J: {
-  //       const UniChar left = LEFT;
-  //       CGEventKeyboardSetUnicodeString(event, 1, &left);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 123);
-  //     } break;
-  //     case OE: {
-  //       const UniChar right = RIGHT;
-  //       CGEventKeyboardSetUnicodeString(event, 1, &right);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
-  //       CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 124);
-  //     } break;
-  //   }
-  // }
+#ifdef GUI_MOVES
+  // NOTE: Gui movement is currently hardcoded for my movement keys jklö and
+  // NOTE: only available when compiling with the -DGUI_MOVES flag
+  if (ax->role == ROLE_TABLE || ax->role == ROLE_SCROLL) {
+    switch (character) {
+      case K: {
+        CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 125);
+      } break;
+      case L: {
+        CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 126);
+      } break;
+      case J: {
+        CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 123);
+      } break;
+      case OE: {
+        CGEventSetIntegerValueField(event, kCGKeyboardEventAutorepeat, false);
+        CGEventSetIntegerValueField(event, kCGKeyboardEventKeycode, 124);
+      } break;
+    }
+  }
+#endif //GUI_MOVES
 
   return event;
 }

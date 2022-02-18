@@ -1,6 +1,6 @@
 VERSION = "1.0.7"
 CC = clang
-DEFINES = -DHAVE_CONFIG_H -DMACOS_X -DMACOS_X_DARWIN
+DEFINES = -DHAVE_CONFIG_H -DMACOS_X -DMACOS_X_DARWIN #-DGUI_MOVES
 LIBS = lib/libvim.a -lm -lncurses -liconv -framework Carbon -framework Cocoa
 WARN_FLAGS = -Wall -Wno-array-bounds \
 	     -Wno-unknown-warning-option \
@@ -8,7 +8,7 @@ WARN_FLAGS = -Wall -Wno-array-bounds \
 	     -Wno-unused-parameter \
 	     -Wno-strict-overflow \
 	     -Wno-return-type -Werror
-CFLAGS = $(WARN_FLAGS) $(DEFINES) -g -Ilib -Ilib/libvim/proto -std=c99 -O2
+CFLAGS = $(WARN_FLAGS) $(DEFINES) -g -Ilib -Ilib/libvim/proto -std=c99 -O2 #-fsanitize=address -fsanitize=undefined
 ODIR = bin
 SRC = src
 
