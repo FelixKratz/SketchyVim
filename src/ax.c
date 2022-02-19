@@ -28,7 +28,7 @@ void ax_begin(struct ax* ax) {
   assert(ax->system_element != NULL);
 }
 
-bool ax_get_text(struct ax* ax) {
+static inline bool ax_get_text(struct ax* ax) {
   CFTypeRef text_ref;
   AXError error = AXUIElementCopyAttributeValue(ax->selected_element,
                                                 kAXValueAttribute,
@@ -52,7 +52,7 @@ bool ax_get_text(struct ax* ax) {
   return error == kAXErrorSuccess;
 }
 
-bool ax_get_cursor(struct ax* ax) {
+static inline bool ax_get_cursor(struct ax* ax) {
   CFTypeRef text_range_ref = NULL;
   CFRange text_range = CFRangeMake(0, 0);
   AXError error = AXUIElementCopyAttributeValue(ax->selected_element,
@@ -74,9 +74,9 @@ bool ax_get_cursor(struct ax* ax) {
   return error == kAXErrorSuccess;
 }
 
-bool ax_set_text(struct ax* ax) {
+static inline bool ax_set_text(struct ax* ax) {
   if (!ax->is_supported || !ax->buffer.raw) return false;
-  if (!ax->buffer.lines_changed) return true;
+  if (!ax->buffer.did_change) return true;
 
   CFStringRef text_ref = CFStringCreateWithCString(NULL,
                                                    ax->buffer.raw,
@@ -90,7 +90,7 @@ bool ax_set_text(struct ax* ax) {
   return error == kAXErrorSuccess;
 }
 
-bool ax_set_cursor(struct ax* ax) {
+static inline bool ax_set_cursor(struct ax* ax) {
   if (!ax->is_supported) return false;
 
   CFRange text_range = CFRangeMake(ax->buffer.cursor.position,
@@ -98,7 +98,7 @@ bool ax_set_cursor(struct ax* ax) {
   AXValueRef value = AXValueCreate(kAXValueCFRangeType, &text_range);
   // HACK: This is needed when the text has been set to give the
   // HACK: AX API some time to breathe...
-  if (ax->buffer.lines_changed) usleep(15000);
+  if (ax->buffer.did_change) usleep(15000);
 
   AXError error = AXUIElementSetAttributeValue(ax->selected_element,
                                                kAXSelectedTextRangeAttribute,
@@ -108,12 +108,12 @@ bool ax_set_cursor(struct ax* ax) {
   return error == kAXErrorSuccess;
 }
 
-bool ax_set_buffer(struct ax* ax) {
+static inline bool ax_set_buffer(struct ax* ax) {
   return ax_set_text(ax)
       && ax_set_cursor(ax);
 }
 
-bool ax_get_selected_element(struct ax* ax) {
+static inline bool ax_get_selected_element(struct ax* ax) {
   CFTypeRef selected_element = NULL;
   AXError error = AXUIElementCopyAttributeValue(ax->system_element,
                                                 kAXFocusedUIElementAttribute,

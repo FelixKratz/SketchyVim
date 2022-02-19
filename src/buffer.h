@@ -26,8 +26,8 @@ struct cursor {
 struct buffer {
   buf_T* vbuf;
   char_u* raw;
+  bool did_change;
 
-  uint32_t lines_changed;
   struct line command_line;
   char cmd_line_mode;
 

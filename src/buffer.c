@@ -25,7 +25,7 @@ void buffer_begin(struct buffer* buffer) {
   buffer_loadrc(buffer);
 }
 
-void buffer_update_raw_text(struct buffer* buffer) {
+static inline bool buffer_update_raw_text(struct buffer* buffer) {
   uint32_t lines = vimBufferGetLineCount(buffer->vbuf);
 
   char_u* raw = NULL;
@@ -42,12 +42,18 @@ void buffer_update_raw_text(struct buffer* buffer) {
   }
   raw[len - 1] = '\0';
 
+  if (raw && buffer->raw && strcmp(buffer->raw, raw) == 0) {
+    free(raw);
+    return false;
+  }
+
   if (buffer->raw) free(buffer->raw);
   buffer->raw = raw;
+  return true;
 }
 
-void buffer_sync_text(struct buffer* buffer) {
-  buffer_update_raw_text(buffer);
+static inline void buffer_sync_text(struct buffer* buffer) {
+  buffer->did_change = buffer_update_raw_text(buffer);
 
   uint32_t lines = vimBufferGetLineCount(buffer->vbuf);
   uint32_t old_count = buffer->line_count;
@@ -60,7 +66,6 @@ void buffer_sync_text(struct buffer* buffer) {
   buffer->lines = realloc(buffer->lines, sizeof(struct line*) * lines);
   buffer->line_count = lines;
 
-  buffer->lines_changed = 0;
   uint32_t cursor_pos_cummulative = 0;
   for (int i = 1; i <= lines; i++) {
     char_u* line = vimBufferGetLine(buffer->vbuf, i);
@@ -68,16 +73,16 @@ void buffer_sync_text(struct buffer* buffer) {
     line_set_text(buffer->lines[i - 1], line);
     buffer->lines[i - 1]->cursor_offset = cursor_pos_cummulative;
     cursor_pos_cummulative += buffer->lines[i - 1]->length + 1;
-    buffer->lines_changed += buffer->lines[i - 1]->changed;
   }
 }
 
-void buffer_sync_cursor(struct buffer* buffer) {
+static inline void buffer_sync_cursor(struct buffer* buffer) {
   pos_T cursor_pos = vimCursorGetPosition();
   uint32_t pos = line_get_position_from_raw_position(buffer->lines[cursor_pos.lnum - 1],
                                                      cursor_pos.col);
 
-  buffer->cursor.position = buffer->lines[cursor_pos.lnum - 1]->cursor_offset + pos;
+  buffer->cursor.position = buffer->lines[cursor_pos.lnum - 1]->cursor_offset
+                            + pos;
 
   if (buffer->cursor.mode & NORMAL) {
     buffer->cursor.selection = 1;
@@ -121,7 +126,7 @@ void buffer_sync_cursor(struct buffer* buffer) {
     buffer->cursor.selection = 0;
 }
 
-bool buffer_sync_mode(struct buffer* buffer) {
+static inline bool buffer_sync_mode(struct buffer* buffer) {
   uint32_t mode = vimGetMode();
   if (mode & buffer->cursor.mode) return false;
   buffer->cursor.mode = mode;
@@ -129,12 +134,15 @@ bool buffer_sync_mode(struct buffer* buffer) {
   return true;
 }
 
-bool buffer_sync_cmdline(struct buffer* buffer) {
-  char* old = buffer->command_line.raw ? string_copy(buffer->command_line.raw) : NULL;
+static inline bool buffer_sync_cmdline(struct buffer* buffer) {
+  char* old = buffer->command_line.raw
+              ? string_copy(buffer->command_line.raw)
+              : NULL;
 
   line_set_text(&buffer->command_line, vimCommandLineGetText());
 
-  if (buffer->command_line.raw && old && strcmp(old, buffer->command_line.raw) == 0) {
+  if (buffer->command_line.raw && old 
+      && strcmp(old, buffer->command_line.raw) == 0) {
     
     free(old);
     return false;
@@ -199,9 +207,9 @@ void buffer_input(struct buffer* buffer, UniChar key, UniCharCount count) {
     vimKey(NORMAL_MODE);
   }
   else {
-    char_u* key_str = malloc(sizeof(char_u) * (2 * count + 1));
-    memset(key_str, 0, (2 * count + 1));
-    snprintf(key_str, 2 * count + 1, "%lc", key);
+    char_u* key_str = malloc(sizeof(char_u) * (sizeof(UniChar) * count + 1));
+    memset(key_str, 0, (sizeof(UniChar) * count + 1));
+    snprintf(key_str, sizeof(UniChar) * count + 1, "%lc", key);
 
     vimInput(key_str);
     free(key_str);
@@ -252,7 +260,7 @@ void buffer_clear(struct buffer* buffer) {
   line_clear(&buffer->command_line);
 
   buffer->cursor = (struct cursor){0, 0, 0};
-  buffer->lines_changed = 0;
+  buffer->did_change = false;
   buffer->line_count = 0;
   buffer->lines = NULL;
   buffer->raw = NULL;

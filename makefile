@@ -53,7 +53,7 @@ lib:
 	cp libvim/src/libvim.a lib/libvim.a
 
 bin/svim: $(SRC)/main.m $(OBJ) | $(ODIR)
-	$(CC) $(CFLAGS) $^ -o $(ODIR)/svim $(LIBS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LIBS)
 
 $(ODIR)/%.o: $(SRC)/%.c $(SRC)/%.h | $(ODIR)
 	$(CC) -c -o $@ $< $(CFLAGS)
