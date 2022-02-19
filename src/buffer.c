@@ -207,12 +207,9 @@ void buffer_input(struct buffer* buffer, UniChar key, UniCharCount count) {
     vimKey(NORMAL_MODE);
   }
   else {
-    char_u* key_str = malloc(sizeof(char_u) * (sizeof(UniChar) * count + 1));
-    memset(key_str, 0, (sizeof(UniChar) * count + 1));
+    char_u key_str[sizeof(UniChar) * count + 1];
     snprintf(key_str, sizeof(UniChar) * count + 1, "%lc", key);
-
     vimInput(key_str);
-    free(key_str);
   }
 
   buffer_sync(buffer);
