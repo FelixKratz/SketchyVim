@@ -78,8 +78,9 @@ static inline void buffer_sync_text(struct buffer* buffer) {
 
 static inline void buffer_sync_cursor(struct buffer* buffer) {
   pos_T cursor_pos = vimCursorGetPosition();
-  uint32_t pos = line_get_position_from_raw_position(buffer->lines[cursor_pos.lnum - 1],
-                                                     cursor_pos.col);
+  uint32_t pos = line_get_position_from_raw_position(
+                                          buffer->lines[cursor_pos.lnum - 1],
+                                          cursor_pos.col                     );
 
   buffer->cursor.position = buffer->lines[cursor_pos.lnum - 1]->cursor_offset
                             + pos;
@@ -97,11 +98,13 @@ static inline void buffer_sync_cursor(struct buffer* buffer) {
       inverted = true;
     }
 
-    uint32_t start_pos = line_get_position_from_raw_position(buffer->lines[start.lnum - 1],
-                                                             start.col);
+    uint32_t start_pos = line_get_position_from_raw_position(
+                                               buffer->lines[start.lnum - 1],
+                                               start.col                     );
 
-    uint32_t end_pos = line_get_position_from_raw_position(buffer->lines[end.lnum - 1],
-                                                           end.col);
+    uint32_t end_pos = line_get_position_from_raw_position(
+                                                 buffer->lines[end.lnum - 1],
+                                                 end.col                     );
     
     uint32_t selection = 0;
     for (int i = start.lnum; i < end.lnum; i++) {
@@ -111,7 +114,7 @@ static inline void buffer_sync_cursor(struct buffer* buffer) {
     int visual_mode = vimVisualGetType();
 
     if (visual_mode == VISUAL_LINE) {
-      buffer->cursor.position = buffer->lines[cursor_pos.lnum - 1]->cursor_offset
+      buffer->cursor.position = buffer->lines[cursor_pos.lnum-1]->cursor_offset
                                 - (inverted ? 0 : selection);
       selection += buffer->lines[end.lnum - 1]->length;
       buffer->cursor.selection = selection;
@@ -178,7 +181,7 @@ void buffer_call_script(struct buffer* buffer, bool supported) {
     env_vars_set(&env_vars, string_copy("CMDLINE"),
                             string_copy((buffer->command_line.raw
                                          ? buffer->command_line.raw
-                                         : "")));
+                                         : ""                      )));
   }
 
   env_vars_set(&env_vars, string_copy("MODE"),
@@ -242,7 +245,7 @@ void buffer_revsync_cursor(struct buffer* buffer) {
     pos.col = line_get_raw_position_from_position(buffer->lines[line - 1],
                                                   buffer->cursor.position
                                                   + line_character_count
-                                                  - character_count);
+                                                  - character_count       );
   }
 
   vimCursorSetPosition(pos);
@@ -262,6 +265,7 @@ void buffer_clear(struct buffer* buffer) {
   buffer->lines = NULL;
   buffer->raw = NULL;
   vimExecute(BUFFER_CLEAR);
+  vimKey(NORMAL_MODE);
   vimKey(NORMAL_MODE);
   vimInput(INSERT_MODE);
 }

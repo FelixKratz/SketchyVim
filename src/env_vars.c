@@ -8,7 +8,8 @@ void env_vars_init(struct env_vars* env_vars) {
 void env_vars_unset(struct env_vars* env_vars, char* key) {
   struct key_value_pair* key_value_pair = NULL;
   for (int i = 0; i < env_vars->count; i++) {
-    if (strcmp(env_vars->vars[i]->key, key) == 0) key_value_pair = env_vars->vars[i];
+    if (strcmp(env_vars->vars[i]->key, key) == 0)
+      key_value_pair = env_vars->vars[i];
   }
 
   if (key_value_pair == NULL) return;
@@ -25,8 +26,11 @@ void env_vars_unset(struct env_vars* env_vars, char* key) {
       tmp[count++] = env_vars->vars[i];
     }
     env_vars->count--;
-    env_vars->vars = realloc(env_vars->vars, sizeof(struct key_value_pair*)*env_vars->count);
-    memcpy(env_vars->vars, tmp, sizeof(struct key_value_pair*)*env_vars->count);
+    env_vars->vars = realloc(env_vars->vars,
+                             sizeof(struct key_value_pair*)*env_vars->count);
+    memcpy(env_vars->vars,
+           tmp,
+           sizeof(struct key_value_pair*)*env_vars->count);
   }
 
   if (key_value_pair->key) free(key_value_pair->key);
@@ -38,7 +42,8 @@ void env_vars_set(struct env_vars* env_vars, char* key, char* value) {
   env_vars_unset(env_vars, key);
 
   env_vars->count++;
-  env_vars->vars = realloc(env_vars->vars, env_vars->count * sizeof(struct key_value_pair*));
+  env_vars->vars = realloc(env_vars->vars,
+                           env_vars->count * sizeof(struct key_value_pair*));
   env_vars->vars[env_vars->count - 1] = malloc(sizeof(struct key_value_pair));
   env_vars->vars[env_vars->count - 1]->key = key;
   env_vars->vars[env_vars->count - 1]->value = value;
@@ -46,7 +51,8 @@ void env_vars_set(struct env_vars* env_vars, char* key, char* value) {
 
 char* env_vars_get_value_for_key(struct env_vars* env_vars, char* key) {
   for (int i = 0; i < env_vars->count; i++) {
-    if (strcmp(env_vars->vars[i]->key, key) == 0) return env_vars->vars[i]->value;
+    if (strcmp(env_vars->vars[i]->key, key) == 0)
+      return env_vars->vars[i]->value;
   }
   return NULL;
 }
@@ -59,5 +65,3 @@ void env_vars_destroy(struct env_vars* env_vars) {
   }
   free(env_vars->vars);
 }
-
-

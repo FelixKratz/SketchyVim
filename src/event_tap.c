@@ -1,6 +1,7 @@
 #include "event_tap.h"
 
-bool event_tap_check_blacklist(struct event_tap* event_tap, char* app, char* bundle_id) {
+bool event_tap_check_blacklist(struct event_tap* event_tap,
+                               char* app, char* bundle_id  ) {
   if (!app || !bundle_id) return true;
   for (int i = 0; i < event_tap->blacklist_count; i++)
     if (strcmp(event_tap->blacklist[i], app) == 0 
@@ -56,7 +57,9 @@ void event_tap_load_blacklist(struct event_tap* event_tap) {
   while (fgets(line, 255, file)) {
     uint32_t len = strlen(line);
     if (line[len - 1] == '\n') line[len - 1] = '\0';
-    event_tap->blacklist = realloc(event_tap->blacklist, sizeof(char**) * ++event_tap->blacklist_count);
+    event_tap->blacklist = realloc(event_tap->blacklist,
+                                sizeof(char**) * ++event_tap->blacklist_count);
+
     event_tap->blacklist[event_tap->blacklist_count - 1] = string_copy(line);
   }
   fclose(file);
@@ -76,11 +79,12 @@ bool event_tap_begin(struct event_tap* event_tap) {
   bool result = event_tap_enabled(event_tap);
   if (result) {
     event_tap->runloop_source = CFMachPortCreateRunLoopSource(
-                                                            kCFAllocatorDefault,
-                                                            event_tap->handle,
-                                                            0);
-    CFRunLoopAddSource(CFRunLoopGetMain(), event_tap->runloop_source,
-                                           kCFRunLoopCommonModes);
+                                                           kCFAllocatorDefault,
+                                                           event_tap->handle,
+                                                           0);
+    CFRunLoopAddSource(CFRunLoopGetMain(),
+                       event_tap->runloop_source,
+                       kCFRunLoopCommonModes);
   }
 
   return result;
@@ -90,8 +94,9 @@ void event_tap_end(struct event_tap* event_tap) {
   if (event_tap_enabled(event_tap)) {
     CGEventTapEnable(event_tap->handle, false);
     CFMachPortInvalidate(event_tap->handle);
-    CFRunLoopRemoveSource(CFRunLoopGetMain(), event_tap->runloop_source,
-                                              kCFRunLoopCommonModes);
+    CFRunLoopRemoveSource(CFRunLoopGetMain(),
+                          event_tap->runloop_source,
+                          kCFRunLoopCommonModes);
     CFRelease(event_tap->runloop_source);
     CFRelease(event_tap->handle);
     event_tap->handle = NULL;

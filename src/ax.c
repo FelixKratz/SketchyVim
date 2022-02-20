@@ -14,7 +14,7 @@ void ax_begin(struct ax* ax) {
   options = CFDictionaryCreate(kCFAllocatorDefault,
                                keys, values, sizeof(keys) / sizeof(*keys),
                                &kCFCopyStringDictionaryKeyCallBacks,
-                               &kCFTypeDictionaryValueCallBacks);
+                               &kCFTypeDictionaryValueCallBacks           );
 
   ax->is_privileged = AXIsProcessTrustedWithOptions(options);
   CFRelease(options);
@@ -57,7 +57,7 @@ static inline bool ax_get_cursor(struct ax* ax) {
   CFRange text_range = CFRangeMake(0, 0);
   AXError error = AXUIElementCopyAttributeValue(ax->selected_element,
                                                 kAXSelectedTextRangeAttribute,
-                                                &text_range_ref               );
+                                                &text_range_ref              );
 
   if (error == kAXErrorSuccess) {
     AXValueGetValue(text_range_ref, kAXValueCFRangeType, &text_range);
@@ -119,8 +119,9 @@ static inline bool ax_get_selected_element(struct ax* ax) {
                                                 kAXFocusedUIElementAttribute,
                                                 &selected_element            );
 
-  if (ax->selected_element && selected_element && CFEqual(ax->selected_element,
-                                                          selected_element     )) {
+  if (ax->selected_element && selected_element
+                           && CFEqual(ax->selected_element,
+                                      selected_element     )) {
     CFRelease(selected_element);
     return true;
   }
@@ -130,7 +131,9 @@ static inline bool ax_get_selected_element(struct ax* ax) {
   CFTypeRef role_ref = NULL;
 
   if (selected_element) {
-    AXUIElementCopyAttributeValue(selected_element, kAXRoleAttribute, &role_ref);
+    AXUIElementCopyAttributeValue(selected_element,
+                                  kAXRoleAttribute,
+                                  &role_ref        );
 
     if (role_ref && (CFEqual(role_ref, kAXTextFieldRole) ||
                      CFEqual(role_ref,  kAXTextAreaRole) ||
@@ -208,7 +211,8 @@ CGEventRef ax_process_event(struct ax* ax, CGEventRef event) {
     if (character == ENTER && ax->buffer.cursor.mode & NORMAL)
       return event;
     
-    bool was_insert = ax->buffer.cursor.mode & INSERT || !ax->buffer.cursor.mode;
+    bool was_insert = ax->buffer.cursor.mode & INSERT
+                      || !ax->buffer.cursor.mode;
     buffer_input(&ax->buffer, character, count);
 
     // Insert mode is passed and only synced later
