@@ -1,8 +1,7 @@
 # SketchyVim
-
-This small project turns all accessible(!) input fields on macOS into full vim
+This small project turns accessible(!) input fields on macOS into full vim
 buffers. It should behave and feel like native vim, because, under the hood
-I simply sync the textfield to a real vim buffer.
+I synchronize the text field with a real vim buffer.
 
 ![demo](https://user-images.githubusercontent.com/22680421/153753171-e818d40b-4d72-4b88-9719-d1e36d16dec0.gif)
 
@@ -18,8 +17,8 @@ is no conflict.
 
 Every time the vim mode changes, or a commandline update is issued, the script
 `svim.sh` in the folder `~/.config/svim/` is executed where you can handle 
-how you want to process this information. I have a small popup in my SketchyBar
-which shows me the commandline output on demand for example.
+how you want to process this information. I have a small popup in my [SketchyBar](https://github.com/FelixKratz/SketchyBar)
+which shows me the command line output on demand for example.
 
 (!): Accessible means, that the input field needs to conform to the accessibility
      standards for text input fields, else there is nothing we can do.
