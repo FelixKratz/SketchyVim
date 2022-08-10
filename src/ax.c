@@ -179,6 +179,18 @@ bool ax_process_selected_element(struct ax* ax) {
   return ax->is_supported && success;
 }
 
+void ax_front_app_changed(struct ax* ax, pid_t pid) {
+#ifdef MANUAL_AX
+  AXUIElementRef app = AXUIElementCreateApplication(pid);
+  if (app) {
+    AXUIElementSetAttributeValue(app,
+                                 CFSTR("AXManualAccessibility"),
+                                 kCFBooleanTrue                 );
+    CFRelease(app);
+  }
+#endif
+}
+
 CGEventRef ax_process_event(struct ax* ax, CGEventRef event) {
   if (!ax_process_selected_element(ax)) return event;
 

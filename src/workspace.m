@@ -31,17 +31,20 @@ void workspace_begin(void **context) {
 - (void)appSwitched:(NSNotification *)notification {
     char* name = NULL;
     char* bundle_id = NULL;
+    pid_t pid = 0;
     if (notification && notification.userInfo) {
       NSRunningApplication* app = [notification.userInfo objectForKey:NSWorkspaceApplicationKey];
       if (app) {
         name = (char*)[[app localizedName] UTF8String];
         bundle_id = (char*)[[app bundleIdentifier] UTF8String];
+        pid = app.processIdentifier;
       }
     }
 
     g_event_tap.front_app_ignored = event_tap_check_blacklist(&g_event_tap,
                                                               name,
-                                                              bundle_id);
+                                                              bundle_id    );
+    ax_front_app_changed(&g_ax, pid);
 }
 
 @end
