@@ -51,6 +51,7 @@ Known Issues:
   Sometimes it helps to switch to a "raw" or "markdown" editing mode on websites,
   such that there is no interference.
   Generally, Safari seems to make most text fields available, while Firefox does not.
+* Comments in svimrc break the config (#18)
 
 ## Contributions
 Pull requests are welcome. If you improve the code for your own use, consider creating
