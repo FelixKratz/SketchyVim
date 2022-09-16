@@ -15,7 +15,7 @@ static void acquire_lockfile(void) {
 
   int handle = open(buffer, O_CREAT | O_WRONLY, 0600);
   if (handle == -1) {
-    printf("Error: Could not create lock-file.\nsvim already running?\n");
+    printf("Error: Could not create lock-file.\n");
     exit(1);
   }
 
@@ -27,8 +27,10 @@ static void acquire_lockfile(void) {
     .l_whence = SEEK_SET
   };
 
-  if (fcntl(handle, F_SETLK, &lockfd) == -1)
-    printf("Error: Could not acquire lock-file.\n"), exit(1);
+  if (fcntl(handle, F_SETLK, &lockfd) == -1) {
+    printf("Error: Could not acquire lock-file.\nsvim already running?\n");
+    exit(1);
+  }
 }
 
 int main (int argc, char *argv[]) {
