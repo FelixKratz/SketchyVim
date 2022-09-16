@@ -1,4 +1,4 @@
-VERSION = "1.0.9"
+VERSION = "1.0.10"
 CC = clang
 DEFINES = -DHAVE_CONFIG_H -DMACOS_X -DMACOS_X_DARWIN # -DMANUAL_AX -DGUI_MOVES
 LIBS = lib/libvim.a -lm -lncurses -liconv -framework Carbon -framework Cocoa
