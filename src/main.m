@@ -7,8 +7,17 @@
 void* g_workspace;
 
 static void acquire_lockfile(void) {
-  int handle = open("/tmp/svim.lock", O_CREAT | O_WRONLY, 0600);
-  if (handle == -1) printf("Error: Could not create lock-file.\n"), exit(1);
+  char *user = getenv("USER");
+  if (!user) printf("Error: User variable not set.\n"), exit(1);
+
+  char buffer[256];
+  snprintf(buffer, 256, "/tmp/svim_%s.lock" , user);
+
+  int handle = open(buffer, O_CREAT | O_WRONLY, 0600);
+  if (handle == -1) {
+    printf("Error: Could not create lock-file.\nsvim already running?\n");
+    exit(1);
+  }
 
   struct flock lockfd = {
     .l_start  = 0,
