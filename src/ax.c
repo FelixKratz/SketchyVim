@@ -29,7 +29,7 @@ void ax_begin(struct ax* ax) {
 }
 
 static inline bool ax_get_text(struct ax* ax) {
-  CFTypeRef text_ref;
+  CFTypeRef text_ref = NULL;
   AXError error = AXUIElementCopyAttributeValue(ax->selected_element,
                                                 kAXValueAttribute,
                                                 &text_ref            );
@@ -48,7 +48,7 @@ static inline bool ax_get_text(struct ax* ax) {
     else free(raw);
   }
 
-  CFRelease(text_ref);
+  if (text_ref) CFRelease(text_ref);
   return error == kAXErrorSuccess;
 }
 
@@ -70,7 +70,7 @@ static inline bool ax_get_cursor(struct ax* ax) {
     }
   }
 
-  CFRelease(text_range_ref);
+  if (text_range_ref) CFRelease(text_range_ref);
   return error == kAXErrorSuccess;
 }
 
