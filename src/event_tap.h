@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <Carbon/Carbon.h>
 #include <stdint.h>
-#include <wchar.h>
 #include "ax.h"
 #include "buffer.h"
 

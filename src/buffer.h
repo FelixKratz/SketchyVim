@@ -1,6 +1,5 @@
 #pragma once
 #include <stdint.h>
-#include <wchar.h>
 #include <CoreText/CoreText.h>
 #include "libvim/libvim.h"
 #include "line.h"

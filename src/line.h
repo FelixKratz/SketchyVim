@@ -1,5 +1,4 @@
 #pragma once
-#include <wchar.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +9,6 @@ struct line {
   uint32_t raw_length;
   uint32_t cursor_offset;
 
-  wchar_t* text;
   char* raw;
 };
 
