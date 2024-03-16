@@ -35,6 +35,8 @@ static void acquire_lockfile(void) {
 
 int main (int argc, char *argv[]) {
   NSApplicationLoad();
+  signal(SIGCHLD, SIG_IGN);
+  signal(SIGPIPE, SIG_IGN);
 
   acquire_lockfile();
   ax_begin(&g_ax);
