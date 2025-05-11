@@ -41,9 +41,8 @@ void workspace_begin(void **context) {
       }
     }
 
-    g_event_tap.front_app_ignored = event_tap_check_blacklist(&g_event_tap,
-                                                              name,
-                                                              bundle_id    );
+    g_event_tap.front_app_name = name;
+    g_event_tap.front_app_ignored = event_tap_check_blacklist(&g_event_tap, name, bundle_id);
     ax_front_app_changed(&g_ax, pid);
 }
 

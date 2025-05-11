@@ -7,14 +7,22 @@ I synchronize the text field with a real vim buffer.
 
 You can use all modes (even commandline etc.) and all commands included in vim.
 
+## svimrc
 It is also possible to load a custom `svimrc` file, which can contain
 custom vim configurations, e.g. remappings (see the examples folder).
 
+## Blacklist Apps
 Additionally, you can edit the `blacklist` file in the `~/.config/svim/` folder
 to manually exclude applications from being handled by svim.
 You will likely want to blacklist your terminal emulator and gvim, such that there
 is no conflict.
 
+## Whitelist App
+svim can temporarily whitelist the currently focused app by pressing `OPTION+I`, which will start the vim buffer in insert mode. Only one app can be whitelisted at a time. 
+
+To remove the app from the whitelist, press `OPTION+I` again or set a different app as the whitelisted app.
+
+## svim.sh
 Every time the vim mode changes, or a commandline update is issued, the script
 `svim.sh` in the folder `~/.config/svim/` is executed where you can handle 
 how you want to process this information. I have a small popup in my [SketchyBar](https://github.com/FelixKratz/SketchyBar)
@@ -38,6 +46,17 @@ where you will be asked to grant accessibility permissions.
 You can change the macOS selection color to anything you like with this command (which is my green):
 ```bash
 defaults write NSGlobalDomain AppleHighlightColor -string "0.615686 0.823529 0.454902"
+```
+
+## Development
+To build:
+```
+make
+```
+
+To run:
+```
+./bin/svim
 ```
 
 ## Issues

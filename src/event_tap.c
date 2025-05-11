@@ -22,7 +22,25 @@ static CGEventRef key_handler(CGEventTapProxy proxy, CGEventType type,
       CGEventTapEnable(((struct event_tap*) reference)->handle, true);
     } break;
     case kCGEventKeyDown: {
-      if (((struct event_tap*) reference)->front_app_ignored) {
+      // Get modifier flags
+      CGEventFlags flags = CGEventGetFlags(event);
+      int keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+
+      struct event_tap* event_tap_ref = ((struct event_tap*) reference);
+      // Enabled/disable whitelist for app when OPTION+I is pressed.
+      if (keycode == KEYCODE_I && (flags & FLAG_OPTION)){
+          // Switch whitelist app to current app if no whitelist app set or a new app is focused
+          if (event_tap_ref->whitelist_app != event_tap_ref->front_app_name) {
+            event_tap_ref->whitelist_app = event_tap_ref->front_app_name;
+          } else {
+            // Remove whitelist app if key combo pressed while focused on whitelisted app
+            event_tap_ref->whitelist_app = NULL;
+          }
+          // Prevent event keys from being processed by focused app
+          event = CGEventCreate(NULL); 
+      }
+
+      if (event_tap_ref->whitelist_app != event_tap_ref->front_app_name && event_tap_ref->front_app_ignored) {
         if (g_ax.selected_element && g_ax.role) {
           ax_clear(&g_ax);
         }
