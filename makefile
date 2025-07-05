@@ -12,7 +12,7 @@ CFLAGS = $(WARN_FLAGS) $(DEFINES) -g -Ilib -Ilib/libvim/proto -std=c99 -O2 #-fsa
 ODIR = bin
 SRC = src
 
-_OBJ = helpers.om workspace.om event_tap.o ax.o buffer.o line.o env_vars.o
+_OBJ = helpers.om workspace.om event_tap.o ax.o buffer.o line.o env_vars.o window_detector.o
 OBJ = $(patsubst %, $(ODIR)/%, $(_OBJ))
 
 .PHONY: all x86 arm64 universal sign lib clean

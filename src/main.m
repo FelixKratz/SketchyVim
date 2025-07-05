@@ -3,8 +3,20 @@
 #include "event_tap.h"
 #include "ax.h"
 #include "workspace.h"
+#include <signal.h>
 
 void* g_workspace;
+
+static void cleanup_and_exit(int sig) {
+    (void)sig; // Unused parameter
+    printf("\nShutting down...\n");
+    
+    event_tap_end(&g_event_tap);
+    ax_end(&g_ax);
+    workspace_end(&g_workspace);
+    
+    exit(0);
+}
 
 static void acquire_lockfile(void) {
   char *user = getenv("USER");
@@ -37,6 +49,8 @@ int main (int argc, char *argv[]) {
   NSApplicationLoad();
   signal(SIGCHLD, SIG_IGN);
   signal(SIGPIPE, SIG_IGN);
+  signal(SIGINT, cleanup_and_exit);
+  signal(SIGTERM, cleanup_and_exit);
 
   acquire_lockfile();
   ax_begin(&g_ax);

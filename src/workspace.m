@@ -7,6 +7,9 @@ void workspace_begin(void **context) {
     *context = ws_context;
 
     [ws_context init];
+    
+    // Start the window detector for apps like Raycast
+    window_detector_begin();
 }
 
 @implementation workspace_context
@@ -16,6 +19,9 @@ void workspace_begin(void **context) {
                 selector:@selector(appSwitched:)
                 name:NSWorkspaceDidActivateApplicationNotification
                 object:nil];
+        
+        // Set up window detector callback
+        window_detector_set_callback(window_detector_app_visibility_changed);
     }
 
     return self;
@@ -47,4 +53,28 @@ void workspace_begin(void **context) {
     ax_front_app_changed(&g_ax, pid);
 }
 
+// Callback for window detector when app visibility changes
+static void window_detector_app_visibility_changed(const char* app_name, bool is_visible) {
+    if (is_visible) {
+        printf("✅ %s appeared\n", app_name);
+        g_event_tap.front_app_ignored = true;
+    } else {
+        printf("⚠️ %s disappeared\n", app_name);
+        // Check if any other blacklisted app is still visible
+        g_event_tap.front_app_ignored = false;
+        // We'll let the next app switch notification handle the final state
+    }
+}
+
 @end
+
+void workspace_end(void **context) {
+    if (context && *context) {
+        workspace_context *ws_context = (workspace_context *)*context;
+        [ws_context dealloc];
+        *context = NULL;
+    }
+    
+    // Stop the window detector
+    window_detector_end();
+}
